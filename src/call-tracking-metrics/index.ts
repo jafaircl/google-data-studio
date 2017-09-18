@@ -39,7 +39,8 @@ const calculatedFields = [
     '30s_calls_duration',
     '30s_callers_duration',
     'lat_lng',
-    'called_at'
+    'called_at',
+    'month'
 ];
 
 function getSchema(request: ScriptRequest) {
@@ -100,57 +101,56 @@ function pushData(calls, dataSchema, rows) {
         let values: any = []
         
         dataSchema.forEach(field => {
-            if (calculatedFields.indexOf(field.name) > -1) {
-                switch(field.name) {
-                    case 'calls_counter':
+            switch(field.name) {
+                case 'calls_counter':
+                    values.push(1)
+                    break
+                case 'callers_counter':
+                    if (call.is_new_caller) {
                         values.push(1)
-                        break
-                    case 'callers_counter':
-                        if (call.is_new_caller) {
-                            values.push(1)
-                        } else {
-                            values.push(0)
-                        }
-                        break
-                    case '30s_calls_counter':
-                        if (call.talk_time > 29) {
-                            values.push(1)
-                        } else {
-                            values.push(0)
-                        }
-                        break
-                    case '30s_calls_duration':
-                        if (call.talk_time > 29) {
-                            values.push(call.talk_time)
-                        } else {
-                            values.push(0)
-                        }
-                        break
-                    case '30s_callers_counter':
-                        if (call.is_new_caller && call.talk_time > 29) {
-                            values.push(1)
-                        } else {
-                            values.push(0)
-                        }
-                        break
-                    case '30s_callers_duration':
-                        if (call.is_new_caller && call.talk_time > 29) {
-                            values.push(call.talk_time)
-                        } else {
-                            values.push(0)
-                        }
-                        break
-                    case 'lat_lng':
-                        values.push(`${call.latitude},${call.longitude}`)
-                        break
-                    case 'called_at':
-                        values.push(formatDate(call.called_at))
-                        break
-                    default:
-                        values.push('')
-                }
-            } else {
-                values.push(call[field.name]);
+                    } else {
+                        values.push(0)
+                    }
+                    break
+                case '30s_calls_counter':
+                    if (call.talk_time > 29) {
+                        values.push(1)
+                    } else {
+                        values.push(0)
+                    }
+                    break
+                case '30s_calls_duration':
+                    if (call.talk_time > 29) {
+                        values.push(call.talk_time)
+                    } else {
+                        values.push(0)
+                    }
+                    break
+                case '30s_callers_counter':
+                    if (call.is_new_caller && call.talk_time > 29) {
+                        values.push(1)
+                    } else {
+                        values.push(0)
+                    }
+                    break
+                case '30s_callers_duration':
+                    if (call.is_new_caller && call.talk_time > 29) {
+                        values.push(call.talk_time)
+                    } else {
+                        values.push(0)
+                    }
+                    break
+                case 'lat_lng':
+                    values.push(`${call.latitude},${call.longitude}`)
+                    break
+                case 'called_at':
+                    values.push(formatDate(call.called_at))
+                    break
+                case 'month':
+                    values.push(monthNameToNumber(call.month))
+                    break
+                default:
+                    values.push(call[field.name])
             }
         })
 
@@ -165,4 +165,21 @@ function formatDate(str: string) {
     const month = str.substring(5, 7)
     const day = str.substring(8,10)
     return [year, month, day].join('')
-} 
+}
+
+function monthNameToNumber(str: string): number {
+    return [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ].indexOf(str) + 1
+}

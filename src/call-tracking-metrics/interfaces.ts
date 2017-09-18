@@ -29,3 +29,5 @@ export interface Call {
     longitude: number,
     called_at: string,
 }
+
+export interface TODATE {}

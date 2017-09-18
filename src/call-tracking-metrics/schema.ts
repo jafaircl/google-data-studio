@@ -329,7 +329,7 @@ export const fixedSchema = [
     }, {
         name: 'month',
         label: 'Month',
-        dataType: 'STRING',
+        dataType: 'NUMBER',
         semantics: {
             conceptType: 'DIMENSION'
         }
