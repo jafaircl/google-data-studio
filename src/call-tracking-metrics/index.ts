@@ -1,5 +1,10 @@
 import { fixedSchema } from './schema'
 import { ScriptRequest, CallData } from './interfaces'
+import { formatDate, monthNameToNumber } from './utils'
+
+function isAdminUser() {
+    return Session.getActiveUser().getEmail().indexOf('healthgrades') > -1
+}
 
 function getAuthType() {
     return {
@@ -158,28 +163,4 @@ function pushData(calls, dataSchema, rows) {
             values: values
         })
     })
-}
-
-function formatDate(str: string) {
-    const year = str.substring(0,4)
-    const month = str.substring(5, 7)
-    const day = str.substring(8,10)
-    return [year, month, day].join('')
-}
-
-function monthNameToNumber(str: string): number {
-    return [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-    ].indexOf(str) + 1
 }

@@ -499,7 +499,7 @@ export const fixedSchema = [
         label: 'Latitude,Longitude',
         dataType: 'STRING',
         semantics: {
-            conceptType: 'METRIC'
+            conceptType: 'DIMENSION'
         }
     }
 ];

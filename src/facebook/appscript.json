@@ -1,0 +1,11 @@
+{
+    "dataStudio": {
+        "name": "Facebook Connector",
+        "company": "Jonathan Faircloth",
+        "companyUrl": "https://www.faircloth.xyz/",
+        "logoUrl": "https://i.imgur.com/fxaJiRW.png",
+        "addonUrl": "https://github.com/jafaircl/google-data-studio",
+        "supportUrl": "https://github.com/jafaircl/google-data-studio/issues",
+        "description": "Connect Call Tracking Metrics to Google Data Studio"
+    }
+}

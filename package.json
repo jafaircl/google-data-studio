@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "build:ctm": "rollup -c --environment input:call-tracking-metrics/index",
-    "watch:ctm": "rollup -c -w --environment input:call-tracking-metrics/index"
+    "watch:ctm": "rollup -c -w --environment input:call-tracking-metrics/index",
+    "build:fb": "rollup -c --environment input:facebook/index",
+    "watch:fb": "rollup -c -w --environment input:facebook/index",
+    "build:ao": "rollup -c --environment input:act-on/index",
+    "watch:ao": "rollup -c -w --environment input:act-on/index"
   },
   "repository": {
     "type": "git",
@@ -33,6 +37,7 @@
     "typescript": "^2.5.2"
   },
   "dependencies": {
-    "dateformat": "^2.0.0"
+    "dateformat": "^2.0.0",
+    "moment-timezone": "^0.5.14"
   }
 }
