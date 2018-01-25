@@ -2,4 +2,6 @@ node_modules
 .rpt2_cache
 build
 build/call-tracking-metrics
+build/facebook
+src/act-on
 keys.ts

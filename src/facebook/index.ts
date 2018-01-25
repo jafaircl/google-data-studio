@@ -71,7 +71,7 @@ function getData(request: ScriptRequest) {
         'unique_inline_link_clicks',
         'reach',
         'impressions',
-        'spend'
+        'spend',
     ]
     let dataSchema: any[] = []
     let requestOptions = {
@@ -89,7 +89,7 @@ function getData(request: ScriptRequest) {
     fields.forEach(field => {
         const fieldName = field.name
         // Add time increment if date is one of the fields
-        if (fieldName === 'date_start' || fieldName === 'date_stop') {
+        if (fieldName === 'date_start' || fieldName === 'date_stop' || fieldName === 'day' || fieldName === 'day_of_week') {
             hasDate = true
         } else if (fieldName === 'month') {
             hasMonth = true
@@ -155,6 +155,7 @@ function fetchData(response, data) {
     response.data.forEach(dataPoint => data.push(dataPoint))
 
     if (response.paging && response.paging.next) {
+        Utilities.sleep(250)
         const _response = JSON.parse(UrlFetchApp.fetch(response.paging.next).getContentText())
         fetchData(_response, data)
     }
@@ -163,71 +164,47 @@ function fetchData(response, data) {
 }
 
 function pushData(stats, dataSchema, rows, hasDate, hasMonth) {
-    
-    if (!hasDate && !hasMonth) {
-        const length = stats.length
-        const clicks = stats.reduce((sum, curr) => sum + parseInt(curr.clicks), 0)
-        const uniqueClicks = stats.reduce((sum, curr) => sum + parseInt(curr.unique_clicks), 0)
-        const inlineLinkClicks = stats.reduce((sum, curr) => sum + parseInt(curr.inline_link_clicks), 0)
-        const uniqueInlineLinkClicks = stats.reduce((sum, curr) => sum + parseInt(curr.unique_inline_link_clicks), 0)
-        const impressions = stats.reduce((sum, curr) => sum + parseInt(curr.impressions), 0)
-        const spend = stats.reduce((sum, curr) => sum + parseInt(curr.spend), 0)
-
-        stats.forEach(stat => {
-            let values: any = []
-            dataSchema.forEach(field => {
-                switch(field.name) {
-                    /*case 'cpc':
-                        values.push((spend / clicks) / length)
-                        break*/
-                    case 'ctr':
-                        values.push(parseFloat(stat[field.name]) / 100)
-                        // values.push((clicks / impressions) / length)
-                        break
-                    case 'unique_ctr':
-                        values.push(parseFloat(stat[field.name]) / 100)
-                        // values.push((uniqueClicks / impressions) / length)
-                        break
-                    case 'inline_link_click_ctr':
-                        values.push(parseFloat(stat[field.name]) / 100)
-                        // values.push((inlineLinkClicks / impressions) / length)
-                        break
-                    case 'unique_inline_link_click_ctr':
-                        values.push(parseFloat(stat[field.name]) / 100)
-                        // values.push((uniqueInlineLinkClicks / impressions) / length)
-                        break
-                    case 'action_reaction':
-                        const reactions = formatAction(stat, 'post_reaction')
-                        values.push(reactions)
-                        break
-                    default:
-                        values.push(stat[field.name])
-                }
-            })
-            rows.push({ values })
+    stats.forEach(stat => {
+        let values: any = []
+        dataSchema.forEach(field => {
+            switch(field.name) {
+                case 'date_start':
+                    values.push(stat.date_start.split('-').join(''))
+                    break
+                case 'month':
+                    values.push(stat.date_start.split('-')[1])
+                    break
+                case 'day':
+                    values.push(stat.date_start.split('-')[2])
+                    break
+                case 'day_of_week':
+                    const dow = new Date(stat.date_start).getDay()
+                    values.push(dow.toString())
+                    break
+                case 'ctr':
+                    values.push(parseFloat(stat[field.name]) / 100)
+                    break
+                case 'unique_ctr':
+                    values.push(parseFloat(stat[field.name]) / 100)
+                    break
+                case 'inline_link_click_ctr':
+                    values.push(parseFloat(stat[field.name]) / 100)
+                    break
+                case 'unique_inline_link_click_ctr':
+                    values.push(parseFloat(stat[field.name]) / 100)
+                    break
+                case 'action_reaction':
+                    const reactions = formatAction(stat, 'post_reaction')
+                    values.push(reactions)
+                    break
+                case 'gender':
+                    values.push(stat[field.name].charAt(0).toUpperCase() + stat[field.name].slice(1))
+                default:
+                    values.push(stat[field.name])
+            }
         })
-    } else {
-        stats.forEach(stat => {
-            let values: any = []
-            dataSchema.forEach(field => {
-                switch(field.name) {
-                    case 'date_start':
-                        values.push(stat.date_start.split('-').join(''))
-                        break
-                    case 'month':
-                        values.push(stat.date_start.split('-')[1])
-                        break
-                    case 'action_reaction':
-                        const reactions = formatAction(stat, 'post_reaction')
-                        values.push(reactions)
-                        break
-                    default:
-                        values.push(stat[field.name])
-                }
-            })
-            rows.push({ values })
-        })
-    }
+        rows.push({ values })
+    })
 }
 
 function formatAction(stat, actionType) {

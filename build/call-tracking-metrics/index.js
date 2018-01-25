@@ -499,11 +499,37 @@ var fixedSchema = [
         label: 'Latitude,Longitude',
         dataType: 'STRING',
         semantics: {
-            conceptType: 'METRIC'
+            conceptType: 'DIMENSION'
         }
     }
 ];
 
+function formatDate(str) {
+    var year = str.substring(0, 4);
+    var month = str.substring(5, 7);
+    var day = str.substring(8, 10);
+    return [year, month, day].join('');
+}
+function monthNameToNumber(str) {
+    return [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ].indexOf(str) + 1;
+}
+
+function isAdminUser() {
+    return Session.getActiveUser().getEmail().indexOf('healthgrades') > -1;
+}
 function getAuthType() {
     return {
         "type": "NONE"
@@ -651,26 +677,4 @@ function pushData(calls, dataSchema, rows) {
             values: values
         });
     });
-}
-function formatDate(str) {
-    var year = str.substring(0, 4);
-    var month = str.substring(5, 7);
-    var day = str.substring(8, 10);
-    return [year, month, day].join('');
-}
-function monthNameToNumber(str) {
-    return [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-    ].indexOf(str) + 1;
 }

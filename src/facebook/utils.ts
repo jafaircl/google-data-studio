@@ -14,6 +14,8 @@ export function get(edge: string, payload: {}, accessToken: string){
 export const invalidFields = [
     'date_start',
     'date_stop',
+    'day_of_week',
+    'day',
     'month',
     'age',
     'country',
